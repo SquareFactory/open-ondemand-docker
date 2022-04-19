@@ -13,3 +13,7 @@
 - 5556 OIDC (HTTP auth)
 
 Recommendation: Use a reverse proxy other than the one included in the docker to add SSL.
+
+## Additional information
+
+This docker image uses [PAM](https://osc.github.io/ood-documentation/release-2.0/authentication/pam.html) to authenticate users.

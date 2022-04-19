@@ -1,8 +1,7 @@
 FROM docker.io/rockylinux/rockylinux:8
 
-RUN dnf -y install https://yum.osc.edu/ondemand/latest/ondemand-release-web-latest-1-6.noarch.rpm
-
-RUN dnf -y update \
+RUN dnf -y install https://yum.osc.edu/ondemand/latest/ondemand-release-web-latest-1-6.noarch.rpm \
+  && dnf -y update \
   && dnf install -y \
   dnf-plugins-core \
   epel-release \
@@ -12,6 +11,7 @@ RUN dnf -y update \
   && dnf install -y \
   ondemand \
   ondemand-dex \
+  mod_authnz_pam \
   slurm \
   sssd \
   xz \
@@ -72,10 +72,13 @@ RUN cp /opt/ood/ood-portal-generator/share/ood_portal_example.yml    /etc/ood/co
 RUN mkdir -p /var/lib/ondemand-nginx/config/apps/{sys,dev,usr}
 RUN touch /var/lib/ondemand-nginx/config/apps/sys/{dashboard,shell,myjobs}.conf
 
-# Setup sudoers for apache
+# Configura auth
 RUN echo -e 'Defaults:apache !requiretty, !authenticate \n\
   Defaults:apache env_keep += "NGINX_STAGE_* OOD_*" \n\
-  apache ALL=(ALL) NOPASSWD: /opt/ood/nginx_stage/sbin/nginx_stage' >/etc/sudoers.d/ood
+  apache ALL=(ALL) NOPASSWD: /opt/ood/nginx_stage/sbin/nginx_stage' >/etc/sudoers.d/ood \
+  && echo "LoadModule authnz_pam_module modules/mod_authnz_pam.so" > /etc/httpd/conf.modules.d/55-authnz_pam.conf \
+  && chmod 640 /etc/shadow \
+  && chgrp apache /etc/shadow
 
 # run the OOD executables to setup the env
 RUN /opt/ood/ood-portal-generator/sbin/update_ood_portal --insecure

@@ -1,0 +1,31 @@
+v2:
+  metadata:
+    title: "Gondo Dev Cluster"
+  login:
+    host: "10.10.0.45"
+  job:
+    adapter: "slurm"
+    cluster: "gondof1"
+    bin: "/usr/bin"
+    conf: "/etc/slurm/slurm.conf"
+    bin_overrides:
+      sbatch: "/usr/bin/sbatch"
+      squeue: "/usr/bin/squeue"
+      scontrol: "/usr/bin/scontrol"
+      scancel: "/usr/bin/scancel"
+  acls:
+  - adapter: "group"
+    groups:
+      - "cluster-users"
+      # - "other_users_of_the_cluster"
+    type: "whitelist"
+  batch_connect:
+      basic:
+        script_wrapper: |
+          %s
+      vnc:
+        script_wrapper: |
+          export PATH="/opt/TurboVNC/bin:$PATH"
+          export WEBSOCKIFY_CMD="/opt/websockify-0.10.0/run"
+          %s
+
