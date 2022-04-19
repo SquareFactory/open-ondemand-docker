@@ -1,0 +1,3 @@
+#!/bin/bash -ex
+
+/opt/ood/ood-portal-generator/sbin/update_ood_portal --force --insecure

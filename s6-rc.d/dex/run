@@ -1,0 +1,3 @@
+#!/bin/bash -ex
+
+s6-setuidgid ondemand-dex /usr/sbin/ondemand-dex serve /etc/ood/dex/config.yaml
