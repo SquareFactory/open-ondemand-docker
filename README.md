@@ -6,6 +6,7 @@
 - `/etc/slurm` must contains `slurm.conf` for Slurm.
 - `/secrets/sssd` must contains `sssd.conf` for LDAP.
 - `/secrets/munge` must contains `munge.key` for Slurm auth.
+- `/secrets/sshd` must contains SSH host keys (and eventually sshd_config).
 
 ## Ports
 

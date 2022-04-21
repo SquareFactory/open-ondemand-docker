@@ -1,4 +1,4 @@
-FROM docker.io/rockylinux/rockylinux:8
+FROM quay.io/rockylinux/rockylinux:8
 
 RUN dnf -y install https://yum.osc.edu/ondemand/latest/ondemand-release-web-latest-1-6.noarch.rpm \
   && dnf -y update \
@@ -32,6 +32,7 @@ RUN dnf -y install https://yum.osc.edu/ondemand/latest/ondemand-release-web-late
   screen \
   tmux \
   git \
+  openssh-server \
   openssh-clients \
   openldap-clients \
   wget \
@@ -78,7 +79,8 @@ RUN echo -e 'Defaults:apache !requiretty, !authenticate \n\
   apache ALL=(ALL) NOPASSWD: /opt/ood/nginx_stage/sbin/nginx_stage' >/etc/sudoers.d/ood \
   && echo "LoadModule authnz_pam_module modules/mod_authnz_pam.so" > /etc/httpd/conf.modules.d/55-authnz_pam.conf \
   && chmod 640 /etc/shadow \
-  && chgrp apache /etc/shadow
+  && chgrp apache /etc/shadow \
+  && cp /etc/pam.d/sshd /etc/pam.d/ood
 
 # run the OOD executables to setup the env
 RUN /opt/ood/ood-portal-generator/sbin/update_ood_portal --insecure
@@ -88,26 +90,27 @@ RUN /usr/libexec/httpd-ssl-gencerts
 VOLUME [ "/secrets/munge", "/secrets/sssd", "/secrets/sshd" ]
 
 COPY s6-rc.d/munge/ /etc/s6-overlay/s6-rc.d/munge/
+COPY s6-rc.d/ssh/ /etc/s6-overlay/s6-rc.d/ssh/
 COPY s6-rc.d/sss/ /etc/s6-overlay/s6-rc.d/sss/
 COPY s6-rc.d/dex/ /etc/s6-overlay/s6-rc.d/dex/
 COPY s6-rc.d/apache/ /etc/s6-overlay/s6-rc.d/apache/
 COPY s6-rc.d/ood-update/ /etc/s6-overlay/s6-rc.d/ood-update/
-COPY s6-rc.d/user/contents.d/munge \
+COPY s6-rc.d/user/contents.d/ssh \
+  s6-rc.d/user/contents.d/munge \
   s6-rc.d/user/contents.d/sss \
   s6-rc.d/user/contents.d/dex \
   s6-rc.d/user/contents.d/apache \
   s6-rc.d/user/contents.d/ood-update \
   /etc/s6-overlay/s6-rc.d/user/contents.d/
 
-ENV S6_OVERLAY_VERSION=3.0.0.2
+ENV S6_OVERLAY_VERSION=3.1.0.1
 
-RUN curl -fsSL https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch-${S6_OVERLAY_VERSION}.tar.xz -o /tmp/s6-overlay-noarch-${S6_OVERLAY_VERSION}.tar.xz \
-  && tar -C / -Jxpf /tmp/s6-overlay-noarch-${S6_OVERLAY_VERSION}.tar.xz \
-  && curl -fsSL https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64-${S6_OVERLAY_VERSION}.tar.xz -o /tmp/s6-overlay-x86_64-${S6_OVERLAY_VERSION}.tar.xz \
-  && tar -C / -Jxpf /tmp/s6-overlay-x86_64-${S6_OVERLAY_VERSION}.tar.xz \
+RUN curl -fsSL https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz -o /tmp/s6-overlay-noarch.tar.xz \
+  && tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
+  && curl -fsSL https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz -o /tmp/s6-overlay-x86_64.tar.xz \
+  && tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz \
   && rm -rf /tmp/*
 
-EXPOSE 8080
-EXPOSE 5556
+EXPOSE 80/tcp 5556/tcp 22/tcp
 
 ENTRYPOINT [ "/init" ]
