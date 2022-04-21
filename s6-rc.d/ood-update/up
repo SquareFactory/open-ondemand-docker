@@ -1,3 +1,10 @@
-#!/bin/bash -ex
+#!/bin/bash -x
+
+mkdir -p /etc/ood/dex
+chown -R ondemand-dex:ondemand-dex /etc/ood/dex
+chmod -R 600 /etc/ood/dex
+chmod 700 /etc/ood/dex
+
+set -e
 
 /opt/ood/ood-portal-generator/sbin/update_ood_portal --force --insecure
