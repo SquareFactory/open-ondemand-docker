@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/sh -x
 
 chown -R ondemand-dex:ondemand-dex /etc/ood/dex
 chmod -R 600 /etc/ood/dex
