@@ -1,3 +1,15 @@
-#!/bin/sh -ex
+#!/bin/sh -x
+
+mkdir -p /var/log/httpd
+chmod 700 /var/log/httpd
+chown root:root /var/log/httpd
+mkdir -p /var/lib/httpd
+chmod 700 /var/lib/httpd
+chown apache:apache /var/lib/httpd
+mkdir -p /run/httpd
+chmod 710 /run/httpd
+chown root:apache /run/
+
+set -e
 
 /usr/sbin/httpd -DFOREGROUND
