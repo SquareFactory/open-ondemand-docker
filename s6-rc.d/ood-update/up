@@ -3,4 +3,4 @@ foreground { /chown -R ondemand-dex:ondemand-dex /etc/ood/dex }
 foreground { /usr/bin/chmod -R 600 /etc/ood/dex }
 foreground { /usr/bin/chmod 700 /etc/ood/dex }
 
-/opt/ood/ood-portal-generator/sbin/update_ood_portal --force --insecure
+/opt/ood/ood-portal-generator/sbin/update_ood_portal --force

@@ -83,7 +83,7 @@ RUN echo -e 'Defaults:apache !requiretty, !authenticate \n\
   && cp /etc/pam.d/sshd /etc/pam.d/ood
 
 # run the OOD executables to setup the env
-RUN /opt/ood/ood-portal-generator/sbin/update_ood_portal --insecure
+RUN /opt/ood/ood-portal-generator/sbin/update_ood_portal
 RUN /opt/ood/nginx_stage/sbin/update_nginx_stage
 RUN /usr/libexec/httpd-ssl-gencerts
 
