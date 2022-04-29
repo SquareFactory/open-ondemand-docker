@@ -1,6 +1,6 @@
 FROM quay.io/rockylinux/rockylinux:8
 
-RUN dnf -y install https://yum.osc.edu/ondemand/latest/ondemand-release-web-latest-1-6.noarch.rpm \
+RUN dnf -y install https://yum.osc.edu/ondemand/2.0/ondemand-release-web-2.0-1.noarch.rpm \
   && dnf -y update \
   && dnf install -y \
   dnf-plugins-core \
