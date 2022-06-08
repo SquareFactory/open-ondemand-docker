@@ -1,5 +1,7 @@
 FROM quay.io/rockylinux/rockylinux:8
 
+ARG slurm_version=22.05.0-1
+
 RUN dnf -y install https://yum.osc.edu/ondemand/2.0/ondemand-release-web-2.0-1.noarch.rpm \
   && dnf -y update \
   && dnf install -y \
@@ -18,9 +20,9 @@ RUN dnf -y install https://yum.osc.edu/ondemand/2.0/ondemand-release-web-2.0-1.n
   authselect \
   zsh \
   nvslurm-plugin-pyxis \
-  slurm-contribs \
-  slurm-libpmi \
-  slurm-pam_slurm \
+  slurm-contribs-${slurm_version}.el8.x86_64 \
+  slurm-libpmi-${slurm_version}.el8.x86_64 \
+  slurm-pam_slurm-${slurm_version}.el8.x86_64 \
   pam_mkslurmuser \
   s3cmd \
   pmix2 \
@@ -45,6 +47,7 @@ RUN dnf -y install https://yum.osc.edu/ondemand/2.0/ondemand-release-web-2.0-1.n
   iproute \
   netcat \
   rsync \
+  nano \
   && dnf clean all && rm -rf /var/cache/dnf/*
 
 # Munge & Slurm configurations
