@@ -7,7 +7,7 @@ RUN dnf -y install https://yum.osc.edu/ondemand/2.0/ondemand-release-web-2.0-1.n
   && dnf install -y \
   dnf-plugins-core \
   epel-release \
-  && dnf config-manager --add-repo https://csquare:VCyV78sQ@yum.csquare.run/yum.repo \
+  && dnf config-manager --add-repo https://yum.deepsquare.run/yum.repo \
   && dnf config-manager --set-enabled powertools \
   && dnf -y module enable nodejs:12 ruby:2.7 \
   && dnf install -y \
