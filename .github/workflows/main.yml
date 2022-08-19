@@ -20,6 +20,7 @@ jobs:
           platforms: linux/amd64
           push: false
           tags: squarefactory/open-ondemand:latest
+          target: ondemand-dex
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -47,6 +48,21 @@ jobs:
           tags: |
             ghcr.io/squarefactory/open-ondemand:latest
             ghcr.io/squarefactory/open-ondemand:${{ steps.get_version.outputs.VERSION }}
+          target: ondemand
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and export
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: docker/build-push-action@v2
+        with:
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ghcr.io/squarefactory/open-ondemand:latest-dex
+            ghcr.io/squarefactory/open-ondemand:${{ steps.get_version.outputs.VERSION }}-dex
+          target: ondemand-dex
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

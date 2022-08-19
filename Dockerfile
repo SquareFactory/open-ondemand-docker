@@ -1,6 +1,6 @@
-FROM quay.io/rockylinux/rockylinux:8
+FROM quay.io/rockylinux/rockylinux:8 as ondemand
 
-ARG slurm_version=22.05.0-1
+ARG slurm_version=22.05.3-1
 
 RUN dnf -y install https://yum.osc.edu/ondemand/2.0/ondemand-release-web-2.0-1.noarch.rpm \
   && dnf -y update \
@@ -12,7 +12,6 @@ RUN dnf -y install https://yum.osc.edu/ondemand/2.0/ondemand-release-web-2.0-1.n
   && dnf -y module enable nodejs:12 ruby:2.7 \
   && dnf install -y \
   ondemand \
-  ondemand-dex \
   mod_authnz_pam \
   slurm \
   sssd \
@@ -20,6 +19,7 @@ RUN dnf -y install https://yum.osc.edu/ondemand/2.0/ondemand-release-web-2.0-1.n
   authselect \
   zsh \
   nvslurm-plugin-pyxis \
+  slurm-${slurm_version}.el8.x86_64 \
   slurm-contribs-${slurm_version}.el8.x86_64 \
   slurm-libpmi-${slurm_version}.el8.x86_64 \
   slurm-pam_slurm-${slurm_version}.el8.x86_64 \
@@ -95,18 +95,17 @@ VOLUME [ "/secrets/munge", "/secrets/sssd", "/secrets/sshd" ]
 COPY s6-rc.d/munge/ /etc/s6-overlay/s6-rc.d/munge/
 COPY s6-rc.d/ssh/ /etc/s6-overlay/s6-rc.d/ssh/
 COPY s6-rc.d/sss/ /etc/s6-overlay/s6-rc.d/sss/
-COPY s6-rc.d/dex/ /etc/s6-overlay/s6-rc.d/dex/
 COPY s6-rc.d/apache/ /etc/s6-overlay/s6-rc.d/apache/
 COPY s6-rc.d/ood-update/ /etc/s6-overlay/s6-rc.d/ood-update/
-COPY s6-rc.d/user/contents.d/ssh \
-  s6-rc.d/user/contents.d/munge \
-  s6-rc.d/user/contents.d/sss \
-  s6-rc.d/user/contents.d/dex \
-  s6-rc.d/user/contents.d/apache \
-  s6-rc.d/user/contents.d/ood-update \
-  /etc/s6-overlay/s6-rc.d/user/contents.d/
+RUN mkdir -p /etc/s6-overlay/s6-rc.d/user/contents.d/ \
+  && touch /etc/s6-overlay/s6-rc.d/user/contents.d/ssh \
+  /etc/s6-overlay/s6-rc.d/user/contents.d/munge \
+  /etc/s6-overlay/s6-rc.d/user/contents.d/sss \
+  /etc/s6-overlay/s6-rc.d/user/contents.d/dex \
+  /etc/s6-overlay/s6-rc.d/user/contents.d/apache \
+  /etc/s6-overlay/s6-rc.d/user/contents.d/ood-update
 
-ENV S6_OVERLAY_VERSION=3.1.0.1
+ENV S6_OVERLAY_VERSION=3.1.1.2
 
 RUN curl -fsSL https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz -o /tmp/s6-overlay-noarch.tar.xz \
   && tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
@@ -114,6 +113,20 @@ RUN curl -fsSL https://github.com/just-containers/s6-overlay/releases/download/v
   && tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz \
   && rm -rf /tmp/*
 
-EXPOSE 80/tcp 5556/tcp 22/tcp
+EXPOSE 80/tcp 22/tcp
 
 ENTRYPOINT [ "/init" ]
+
+FROM ondemand as ondemand-dex
+
+RUN dnf install -y \
+  ondemand-dex \
+  && dnf clean all
+
+# run the OOD executables to setup the env
+RUN /opt/ood/ood-portal-generator/sbin/update_ood_portal
+
+COPY s6-rc.d/dex/ /etc/s6-overlay/s6-rc.d/dex/
+RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/ood-update
+
+EXPOSE 5556/tcp
