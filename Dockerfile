@@ -9,10 +9,11 @@ RUN dnf -y install https://yum.osc.edu/ondemand/2.0/ondemand-release-web-2.0-1.n
   epel-release \
   && dnf config-manager --add-repo https://yum.deepsquare.run/yum.repo \
   && dnf config-manager --set-enabled powertools \
-  && dnf -y module enable nodejs:12 ruby:2.7 \
+  && dnf -y module enable nodejs:14 ruby:2.7 \
   && dnf install -y \
   ondemand \
   mod_authnz_pam \
+  mod_auth_openidc \
   slurm \
   sssd \
   xz \
