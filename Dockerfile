@@ -101,7 +101,6 @@ RUN mkdir -p /etc/s6-overlay/s6-rc.d/user/contents.d/ \
   && touch /etc/s6-overlay/s6-rc.d/user/contents.d/ssh \
   /etc/s6-overlay/s6-rc.d/user/contents.d/munge \
   /etc/s6-overlay/s6-rc.d/user/contents.d/sss \
-  /etc/s6-overlay/s6-rc.d/user/contents.d/dex \
   /etc/s6-overlay/s6-rc.d/user/contents.d/apache \
   /etc/s6-overlay/s6-rc.d/user/contents.d/ood-update
 
@@ -127,6 +126,6 @@ RUN dnf install -y \
 RUN /opt/ood/ood-portal-generator/sbin/update_ood_portal
 
 COPY s6-rc.d/dex/ /etc/s6-overlay/s6-rc.d/dex/
-RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/ood-update
+RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/dex
 
 EXPOSE 5556/tcp
