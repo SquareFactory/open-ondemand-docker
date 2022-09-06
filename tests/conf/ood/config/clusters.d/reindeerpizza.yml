@@ -1,36 +1,38 @@
 v2:
-  metadata:
-    title: "Reindeer Pizza Cluster"
-  login:
-    host: "10.10.2.41"
-  job:
-    adapter: "slurm"
-    cluster: "ReindeerPizza"
-    bin: "/usr/bin"
-    conf: "/etc/slurm/slurm.conf"
-    bin_overrides:
-      sbatch: "/usr/bin/sbatch"
-      squeue: "/usr/bin/squeue"
-      scontrol: "/usr/bin/scontrol"
-      scancel: "/usr/bin/scancel"
   acls:
-  - adapter: "group"
-    groups:
-      - "cluster-users"
-      # - "other_users_of_the_cluster"
-    type: "whitelist"
+    - adapter: group
+      groups:
+        - cluster-users
+      type: whitelist
   batch_connect:
-      basic:
-        script_wrapper: |
-          %s
-      vnc:
-        script_wrapper: |
-          . $LMOD_PKG/init/sh
-          export WEBSOCKIFY_CMD="python3 -m websockify"
-          export PATH="/opt/TurboVNC/bin:${PATH}"
+    basic:
+      script_wrapper: |
+        %s
+    vnc:
+      script_wrapper: |
+        . $LMOD_PKG/init/sh
+        export WEBSOCKIFY_CMD="python3 -m websockify"
+        export PATH="/opt/TurboVNC/bin:${PATH}"
+
+        if ! type "nvidia-smi" > /dev/null; then
           id="$(nvidia-smi --query-gpu=gpu_bus_id --format=csv,noheader)"
           id="${id:4:12}"
           card="$(basename $(ls "/sys/bus/pci/devices/${id}/drm/" | grep card))"
           export VGL_DISPLAY="/dev/dri/${card}"
-          %s
+        fi
 
+        %s
+  job:
+    adapter: slurm
+    bin: /usr/bin
+    bin_overrides:
+      sbatch: /usr/bin/sbatch
+      scancel: /usr/bin/scancel
+      scontrol: /usr/bin/scontrol
+      squeue: /usr/bin/squeue
+    cluster: reindeerpizza
+    conf: /etc/slurm/slurm.conf
+  login:
+    host: 127.0.0.1
+  metadata:
+    title: Reindeer Pizza Cluster

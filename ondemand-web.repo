@@ -1,0 +1,20 @@
+[ondemand-web]
+name=Open OnDemand Web Repo
+baseurl=https://yum.osc.edu/ondemand/latest/web/el$releasever/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.osc.edu/ondemand/RPM-GPG-KEY-ondemand
+
+[ondemand-web-nightly]
+name=Open OnDemand Web Repo Nightly
+baseurl=https://yum.osc.edu/ondemand/nightly/web/el$releasever/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.osc.edu/ondemand/RPM-GPG-KEY-ondemand
+
+[ondemand-web-source]
+name=Open OnDemand Web Repo Source
+baseurl=https://yum.osc.edu/ondemand/latest/web/el$releasever/SRPMS/
+enabled=0
+gpgcheck=1
+gpgkey=https://yum.osc.edu/ondemand/RPM-GPG-KEY-ondemand

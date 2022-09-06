@@ -41,6 +41,9 @@ spec:
     - name: slurm-conf
       hostPath:
         path: ./conf/slurm
+    - name: extra-configs
+      hostPath:
+        path: ./conf/ood/extra-configs
     - name: ood-conf
       hostPath:
         path: ./conf/ood/config

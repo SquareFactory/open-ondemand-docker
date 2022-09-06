@@ -1,2 +1,2 @@
 OOD_SHELL_ORIGIN_CHECK='off'
-DEFAULT_SSHHOST="localhost"
+OOD_SSH_WRAPPER='/usr/local/sbin/ssh_override'

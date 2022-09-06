@@ -414,11 +414,11 @@ dex:
       id: ldap
       name: LDAP
       config:
-        host: ldap.csquare.gcloud:636
+        host: ldap-2.deepsquare.internal:636
         insecureSkipVerify: true
-        bindDN: cn=admin,dc=hpc,dc=csquare,dc=run
+        bindDN: cn=Directory Manager
         userSearch:
-          baseDN: ou=People,dc=hpc,dc=csquare,dc=run
+          baseDN: ou=people,dc=hpc,dc=deepsquare,dc=run
           filter: '(objectClass=posixAccount)'
           username: uid
           idAttr: uid
@@ -426,15 +426,17 @@ dex:
           nameAttr: cn
           preferredUsernameAttr: cn
         groupSearch:
-          baseDN: ou=Group,dc=example,dc=org
+          baseDN: ou=group,dc=hpc,dc=deepsquare,dc=run
           filter: '(objectClass=posixGroup)'
           userMatchers:
             - userAttr: DN
               groupAttr: memberUid
           nameAttr: cn
-host_regex: 'cn\d+'
+host_regex: 'cn.*'
 node_uri: '/node'
 rnode_uri: '/rnode'
 #  frontend:
 #    theme: ondemand
 #    dir: /usr/share/ondemand-dex/web
+
+pun_pre_hook_root_cmd: '/usr/sbin/pun_pre_hook_root_cmd.sh'

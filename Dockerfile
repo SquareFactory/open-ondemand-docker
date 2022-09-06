@@ -2,16 +2,26 @@ FROM quay.io/rockylinux/rockylinux:8 as ondemand
 
 ARG slurm_version=22.05.3-1
 
-RUN dnf -y install https://yum.osc.edu/ondemand/2.0/ondemand-release-web-2.0-1.noarch.rpm \
-  && dnf -y update \
+COPY ./ondemand-web.repo /etc/yum.repos.d/ondemand-web.repo
+
+RUN dnf -y update \
   && dnf install -y \
   dnf-plugins-core \
   epel-release \
   && dnf config-manager --add-repo https://yum.deepsquare.run/yum.repo \
   && dnf config-manager --set-enabled powertools \
-  && dnf -y module enable nodejs:12 ruby:2.7 \
+  && dnf -y module enable nodejs:14 ruby:3.0 \
   && dnf install -y \
   ondemand \
+  ondemand-gems \
+  ondemand-runtime \
+  ondemand-build \
+  ondemand-apache \
+  ondemand-ruby \
+  ondemand-nodejs \
+  ondemand-python \
+  ondemand-passenger \
+  ondemand-nginx \
   mod_authnz_pam \
   mod_auth_openidc \
   slurm \
